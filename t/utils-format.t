@@ -4,7 +4,7 @@
 ##
 ###############################################################################################
 
-use Test::More tests => 19;
+use Test::More tests => 20;
 use Test::Deep;
 
 BEGIN { use_ok 'Tarp::Utils::Format::Accounts'; }
@@ -79,6 +79,12 @@ subtest 'Tarp::Utils::Format::Xlists' => sub {
     ok my $obj = Tarp::Utils::Format::Xlists->new( xlist_course_id => 'x', section_id => 'x', status => 'active' ), '::Xlists->new';
     is $obj->file, 'xlists.csv', '::Xlists->file';
     cmp_deeply [ $obj->header], [ qw/xlist_course_id section_id status/ ], '::Xlists->header';
+};
+
+subtest 'Tarp::Utils::Format Attrib' => sub {
+    plan tests => 2;
+    ok my $obj = Tarp::Utils::Format::Users->new( user_id => 'x', login_id => 'x', status => 'active', is_pain_in_the_ass => 1 ), '::Users->new(extra)';
+    cmp_deeply $obj->extra, { 'is_pain_in_the_ass' => 1 }, '::Users->extra';
 };
 
 subtest 'Tarp::Utils::Format Role' => sub {

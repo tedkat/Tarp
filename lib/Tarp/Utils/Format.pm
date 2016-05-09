@@ -13,7 +13,7 @@ around BUILDARGS => sub {
     my ( @arg, %extra );
     my @h = $class->header;
     for my $k ( keys %args ) {
-        if ( any { exists $args{$_} } @h ) {
+        if ( any { $_ eq $k } @h ) {
             push @arg, $k, $args{$k};
         }
         else {
