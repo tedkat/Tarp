@@ -31,5 +31,10 @@ sub to_csv {
     return $csv->string;
 }
 
+sub to_hash {
+    my $self = shift;
+    return { map { $_ => $self->$_ } $self->header };
+}
+
 1;
 }

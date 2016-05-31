@@ -29,7 +29,7 @@ subtest 'Tarp::Utils::Format::Courses' => sub {
     plan tests => 3;
     ok my $obj = Tarp::Utils::Format::Courses->new( course_id => 'x', short_name => 'x', long_name => 'x', status => 'active' ), '::Courses->new';
     is $obj->file, 'courses.csv', '::Courses->file';
-    cmp_deeply [ $obj->header], [ qw/course_id short_name long_name account_id term_id status/ ], '::Courses->header';
+    cmp_deeply [ $obj->header], [ qw/course_id short_name long_name account_id term_id status start_date end_date/ ], '::Courses->header';
 };
 
 subtest 'Tarp::Utils::Format::Enrollments' => sub {
@@ -88,7 +88,7 @@ subtest 'Tarp::Utils::Format Attrib' => sub {
 };
 
 subtest 'Tarp::Utils::Format Role' => sub {
-    plan tests => 2;
+    plan tests => 3;
     my ($obj, $fail, $failmesg);
 
     ## method ->to_csv; 
@@ -96,7 +96,8 @@ subtest 'Tarp::Utils::Format Role' => sub {
     $obj = Tarp::Utils::Format::Xlists->new( xlist_course_id => '"x xx x"', section_id => 'x', status => 'active' );
     is $obj->to_csv, '"""x xx x""",x,active', 'Format::->to_csv with escaped " with "';
     $obj = Tarp::Utils::Format::Courses->new( course_id => '1 - - x', short_name => 'x', long_name => 'x', status => 'active' );
-    is $obj->to_csv, '"1 - - x",x,x,,,active', 'Format::->to_csv with optional fields';
+    is $obj->to_csv, '"1 - - x",x,x,,,active,,', 'Format::->to_csv with optional fields';
+    cmp_deeply $obj->to_hash, { course_id => '1 - - x', short_name => 'x', long_name => 'x', status => 'active', account_id => '', start_date => '', end_date => '', term_id => '' }, 'Format::->to_hash with optional fields';
 };
 
 done_testing();

@@ -4,7 +4,7 @@
 ##
 ###############################################################################################
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 use Test::Deep;
 use Try::Tiny;
 use DateTime;
@@ -24,6 +24,7 @@ use DateTime;
     has GroupMembershipStatus => ( is => 'ro', isa => GroupMembershipStatus );
     
     has DateStr               => ( is => 'ro', isa => DateStr, coerce => 1 );
+    has OptionalDateStr       => ( is => 'ro', isa => OptionalDateStr, coerce => 1 );
 
     __PACKAGE__->meta->make_immutable;
  
@@ -121,5 +122,43 @@ subtest 'DateStr type' => sub {
     try { $fail = 1; $failmesg = ''; Test::Tarp::Utils::Types->new( DateStr => '\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ' ); $fail = 0 } catch { $failmesg = $_; };
     ok $fail, "test new DateStr( '\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ' )";
     like $failmesg, qr/does not pass the type constraint/, 'fail message';
+    
+    try { $fail = 1; $failmesg = ''; Test::Tarp::Utils::Types->new( DateStr => '' ); $fail = 0 } catch { $failmesg = $_; };
+    ok $fail, "test new DateStr( '' )";
+    like $failmesg, qr/does not pass the type constraint/, 'fail message'
 };
 
+## OptionalDateStr
+subtest 'OptionalDateStr type' => sub {
+
+    try { $fail = 1; $failmesg = ''; Test::Tarp::Utils::Types->new( OptionalDateStr => '' ); $fail = 0; } catch { $failmesg = $_; };
+    ok !$fail, "test new OptionalDateStr(  '' )";
+    is $failmesg, '', 'no message';    
+
+    try { $fail = 1; $failmesg = ''; Test::Tarp::Utils::Types->new( OptionalDateStr => '1990-01-01T10:05:05Z' ); $fail = 0; } catch { $failmesg = $_; };
+    ok !$fail, "test new OptionalDateStr(  '1990-01-01T10:05:05Z' )";
+    is $failmesg, '', 'no message';    
+    
+    my $date = DateTime->new( year => 1990, month => 1, day => 1, hour => 10, minute => 5, second => 5 );
+    try { $fail = 1; $failmesg = ''; $obj = Test::Tarp::Utils::Types->new( OptionalDateStr => $date ); $fail = 0; } catch { $failmesg = $_; };
+    ok !$fail, "test new OptionalDateStr(  DateTime )";
+    is $failmesg, '', 'no message';    
+    is $obj->OptionalDateStr, '1990-01-01T10:05:05Z', 'DateTime to OptionalDateStr coerce';
+    
+    $date = DateTime->new( year => 1990, month => 1, day => 1, hour => 10, minute => 5, second => 5, time_zone => 'UTC' );
+    try { $fail = 1; $failmesg = ''; $obj = Test::Tarp::Utils::Types->new( OptionalDateStr => $date ); $fail = 0; } catch { $failmesg = $_; };
+    ok !$fail, "test new OptionalDateStr(  DateTime ) as UTC";
+    is $failmesg, '', 'no message';    
+    is $obj->OptionalDateStr, '1990-01-01T10:05:05Z', 'DateTime(UTC) to OptionalDateStr coerce';
+    
+    $date = DateTime->new( year => 1990, month => 1, day => 1, hour => 10, minute => 5, second => 5, time_zone => 'America/Chicago' );
+    try { $fail = 1; $failmesg = ''; $obj = Test::Tarp::Utils::Types->new( OptionalDateStr => $date ); $fail = 0; } catch { $failmesg = $_; };
+    ok !$fail, "test new OptionalDateStr(  DateTime ) as America/Chicago ";
+    is $failmesg, '', 'no message';    
+    is $obj->OptionalDateStr, '1990-01-01T16:05:05Z', 'DateTime(America/Chicago) to OptionalDateStr coerce as UTC';
+
+    try { $fail = 1; $failmesg = ''; Test::Tarp::Utils::Types->new( OptionalDateStr => '\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ' ); $fail = 0 } catch { $failmesg = $_; };
+    ok $fail, "test new OptionalDateStr( '\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ' )";
+    like $failmesg, qr/does not pass the type constraint/, 'fail message';
+
+};

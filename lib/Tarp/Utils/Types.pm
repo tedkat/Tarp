@@ -2,7 +2,7 @@ package Tarp::Utils::Types;
 
 use Type::Library
  -base,
- -declare => qw/Datetime BasicStatus CourseStatus EnrollmentStatus GroupStatus GroupMembershipStatus DateStr/;
+ -declare => qw/Datetime BasicStatus CourseStatus EnrollmentStatus GroupStatus GroupMembershipStatus DateStr OptionalDateStr/;
 
 use Type::Utils -all;
 use Types::Standard -types;
@@ -33,7 +33,16 @@ declare DateStr,
     as Str,
     where { m/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ/ };
     
+    
 coerce DateStr,
+    from Datetime,
+    via { $_->set_time_zone('UTC'); return sprintf('%sT%sZ', $_->ymd, $_->hms); };
+
+declare OptionalDateStr,
+    as Str,
+    where { $_ eq '' or  m/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ/ };
+    
+coerce OptionalDateStr,
     from Datetime,
     via { $_->set_time_zone('UTC'); return sprintf('%sT%sZ', $_->ymd, $_->hms); };
 
