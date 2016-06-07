@@ -23,7 +23,7 @@ ok my $toDB = Tarp::Utils::Builder::ToDB->new( schema => $test->schema, format =
 
 ################################################################################################
 ##
-## Test public method load
+## Test public method ->load()
 ##
 ##
 
@@ -45,7 +45,7 @@ is scalar(@{ $toDB->data }), 4, '->data has 4 entries';
 
 ##
 ##
-## Test private method _in_dataset() ###################
+## Test private method ->_in_dataset() ###################
 ##
 ##
 
@@ -59,7 +59,7 @@ is $toDB->_in_dataset($account), -1, '_in_dataset return not found as expected';
 
 ################################################################################################
 ##
-## Test public method commit
+## Test public method ->commit()
 ## 
 ##
 
@@ -85,7 +85,7 @@ is $test->schema->resultset('Accounts')->search( { is_dirty => 'C' } )->count, 4
 
 ##
 ##
-## Test private methods _update_row_if_changed ######################
+## Test private methods ->_update_row_if_changed() ######################
 ##
 ##
 
@@ -111,7 +111,7 @@ is $account->is_dirty, '', 'db data for account_id = 4 is_dirty "" is expected n
 
 ##
 ##
-## Test private method _delete_row ######################
+## Test private method ->_delete_row() ######################
 ##
 ##
 
@@ -128,7 +128,7 @@ is $account->is_dirty, 'D', 'db account_id 4 is_dirty = "D"';
 
 ##
 ##
-## Test private method _create_row ######################
+## Test private method ->_create_row() ######################
 ##
 ##
 
