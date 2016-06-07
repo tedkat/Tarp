@@ -18,7 +18,7 @@ __PACKAGE__->add_columns(
                           status      => { data_type => 'text', is_nullable => 0            },
                           start_date  => { data_type => 'text', is_nullable => 0            },
                           end_date    => { data_type => 'text', is_nullable => 0            },
-                          extra              => { data_type => 'text', is_nullable => 0,           },
+                          extra       => { data_type => 'text', is_nullable => 0,           },
                           is_dirty    => { data_type => 'char', is_nullable => 0, size => 1 }, ## expect C, U, D, or 0|'' for not dirty
                         );
 

@@ -15,7 +15,6 @@ has password                   => ( is => 'rw', isa => 'Str', default => '', laz
 has authentication_provider_id => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
 has first_name                 => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
 has last_name                  => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
-has full_name                  => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
 has sortable_name              => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
 has short_name                 => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
 has email                      => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
