@@ -18,7 +18,7 @@ my @Builder = qw/Accounts Courses Enrollments Sections Terms Users Xlists/;
 
 BEGIN {
     ## Skip 
-    plan skip_all => 'set TARP_AUTHOR to run tests' unless ( exists $ENV{TARP_AUTHOR} );
+    plan skip_all => 'set AUTHOR_TESTING to run tests' unless ( exists $ENV{AUTHOR_TESTING} );
 
     ## Formats
     for my $builder ( @Builder ) {
