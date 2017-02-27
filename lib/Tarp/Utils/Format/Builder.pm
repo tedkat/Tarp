@@ -1,4 +1,4 @@
-package Tarp::Utils::Builder;
+package Tarp::Utils::Format::Builder;
 use Moose;
 use namespace::autoclean;
 
@@ -19,7 +19,7 @@ my %format = (
 has 'schema' => ( is => 'ro', isa => 'DBIx::Class', required => 1 );
 has 'format' => ( is => 'ro', isa => 'Str',         required => 1 );
 
-has 'data'    => ( is => 'ro', isa => 'ArrayRef', 'default' => sub { []; }, lazy => 1, init_arg => undef );
+has 'data'    => ( is => 'ro', isa => 'HashRef', 'default' => sub { {}; }, lazy => 1, init_arg => undef );
 has 'util'    => ( is => 'ro', isa => 'Str',      'builder' => '_util',     lazy => 1, init_arg => undef );
 has 'dbic'    => ( is => 'ro', isa => 'Str',      'builder' => '_dbic',     lazy => 1, init_arg => undef );
 
@@ -37,4 +37,3 @@ sub BUILD {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

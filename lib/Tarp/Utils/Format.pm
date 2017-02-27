@@ -24,9 +24,16 @@ around BUILDARGS => sub {
     return $class->$orig( @arg );
 };
 
+sub csv_header {
+    my $self = shift;
+    my $csv = Text::CSV->new( { escape_char => '"', quote_char => '"', eol => "\n" } );
+    $csv->combine( map { $_ } $self->header );
+    return $csv->string;
+}
+
 sub to_csv {
     my $self = shift;
-    my $csv = Text::CSV->new( { escape_char => '"', quote_char => '"' } );
+    my $csv = Text::CSV->new( { escape_char => '"', quote_char => '"', eol => "\n" } );
     $csv->combine( map { $self->$_ } $self->header );
     return $csv->string;
 }

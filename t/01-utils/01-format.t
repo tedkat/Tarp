@@ -71,7 +71,7 @@ subtest 'Tarp::Utils::Format::Users' => sub {
     plan tests => 3;
     ok my $obj = Tarp::Utils::Format::Users->new( user_id => 'x', login_id => 'x', status => 'active' ), '::Users->new';
     is $obj->file, 'users.csv', '::Users->file';
-    cmp_deeply [ $obj->header], [ qw/user_id login_id authentication_provider_id password first_name last_name short_name email status/ ], '::Users->header';
+    cmp_deeply [ $obj->header], [ qw/user_id login_id authentication_provider_id password first_name last_name sortable_name short_name email status/ ], '::Users->header';
 };
 
 subtest 'Tarp::Utils::Format::Xlists' => sub {
@@ -91,12 +91,12 @@ subtest 'Tarp::Utils::Format Role' => sub {
     plan tests => 3;
     my ($obj, $fail, $failmesg);
 
-    ## method ->to_csv; 
-    
+    ## method ->to_csv;
+
     $obj = Tarp::Utils::Format::Xlists->new( xlist_course_id => '"x xx x"', section_id => 'x', status => 'active' );
-    is $obj->to_csv, '"""x xx x""",x,active', 'Format::->to_csv with escaped " with "';
+    is $obj->to_csv, '"""x xx x""",x,active'."\n", 'Format::->to_csv with escaped " with " with EOL';
     $obj = Tarp::Utils::Format::Courses->new( course_id => '1 - - x', short_name => 'x', long_name => 'x', status => 'active' );
-    is $obj->to_csv, '"1 - - x",x,x,,,active,,', 'Format::->to_csv with optional fields';
+    is $obj->to_csv, '"1 - - x",x,x,,,active,,'."\n", 'Format::->to_csv with optional fields with EOL';
     cmp_deeply $obj->to_hash, { course_id => '1 - - x', short_name => 'x', long_name => 'x', status => 'active', account_id => '', start_date => '', end_date => '', term_id => '' }, 'Format::->to_hash with optional fields';
 };
 

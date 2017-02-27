@@ -21,6 +21,10 @@ has associated_user_id => ( is => 'rw', isa => 'Str', default => '', lazy => 1 )
 
 sub file   { return 'enrollments.csv'; }
 sub header { return qw/course_id section_id status user_id root_account associated_user_id role role_id/; }
+sub key {
+    my $self = shift;
+    return join( '^', map { $self->$_ } qw/course_id user_id role section_id associated_user_id/);
+}
 
 sub BUILD {
     my $self = shift;

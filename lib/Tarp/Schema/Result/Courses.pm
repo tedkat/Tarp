@@ -32,10 +32,19 @@ __PACKAGE__->filter_column(
                                          filter_from_storage => sub { from_json( $_[1] ); },
                                      }
                           );
-                          
+
 sub format {
     my $self = shift;
-    Tarp::Utils::Format::Courses->new( map { $_ => $self->$_ } Tarp::Utils::Format::Courses->meta->get_all_attributes );
+    my $f = Tarp::Utils::Format::Courses->new( map { $_ => $self->$_ } grep { !/extra/ } map { $_->name } Tarp::Utils::Format::Courses->meta->get_all_attributes );
+    $f->extra( $self->extra );
+    return $f;
+}
+
+sub json {
+    my $self = shift;
+    my %h = map { $_ => $self->$_ } map { $_->name } Tarp::Utils::Format::Courses->meta->get_all_attributes;
+    $h{extra} = $self->extra;
+    return to_json( \%h );
 }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);

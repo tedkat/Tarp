@@ -20,6 +20,10 @@ has end_date    => ( is => 'rw', isa => OptionalDateStr, default => '', lazy => 
 
 sub file   { return 'courses.csv'; }
 sub header { return qw/course_id short_name long_name account_id term_id status start_date end_date/; }
+sub key {
+    my $self = shift;
+    return $self->course_id;
+}
 
 __PACKAGE__->meta->make_immutable;
 

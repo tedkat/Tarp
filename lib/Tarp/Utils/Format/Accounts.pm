@@ -15,6 +15,10 @@ has parent_account_id  => ( is => 'rw', isa => 'Str', default => '', lazy => 1 )
 
 sub file { return 'accounts.csv'; }
 sub header { return qw/account_id parent_account_id name status/; }
+sub key {
+    my $self = shift;
+    return $self->account_id;
+}
 
 __PACKAGE__->meta->make_immutable;
 

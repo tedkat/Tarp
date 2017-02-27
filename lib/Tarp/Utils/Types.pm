@@ -19,7 +19,7 @@ declare CourseStatus,
 
 declare EnrollmentStatus,
     as Str,
-    where { $_ eq 'active'  or $_ eq 'deleted' or $_ eq 'completed' or $_ eq 'inactive' };
+    where { $_ eq 'active'  or $_ eq 'deleted' or $_ eq 'completed' or $_ eq 'concluded' or $_ eq 'inactive' };
 
 declare GroupStatus,
     as Str,
@@ -28,12 +28,12 @@ declare GroupStatus,
 declare GroupMembershipStatus,
     as Str,
     where { $_ eq 'accepted'  or $_ eq 'deleted' };
-    
+
 declare DateStr,
     as Str,
     where { m/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ/ };
-    
-    
+
+
 coerce DateStr,
     from Datetime,
     via { $_->set_time_zone('UTC'); return sprintf('%sT%sZ', $_->ymd, $_->hms); };
@@ -41,7 +41,7 @@ coerce DateStr,
 declare OptionalDateStr,
     as Str,
     where { $_ eq '' or  m/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ/ };
-    
+
 coerce OptionalDateStr,
     from Datetime,
     via { $_->set_time_zone('UTC'); return sprintf('%sT%sZ', $_->ymd, $_->hms); };

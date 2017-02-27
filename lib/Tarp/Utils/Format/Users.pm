@@ -20,7 +20,11 @@ has short_name                 => ( is => 'rw', isa => 'Str', default => '', laz
 has email                      => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
 
 sub file   { return 'users.csv'; }
-sub header { return qw/user_id login_id authentication_provider_id password first_name last_name short_name email status/; }
+sub header { return qw/user_id login_id authentication_provider_id password first_name last_name sortable_name short_name email status/; }
+sub key {
+    my $self = shift;
+    return $self->user_id;
+}
 
 __PACKAGE__->meta->make_immutable;
 

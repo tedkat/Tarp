@@ -13,6 +13,10 @@ has status           => ( is => 'rw', required => 1, isa => BasicStatus );
 
 sub file   { 'xlists.csv'; }
 sub header { return qw/xlist_course_id section_id status/; }
+sub key {
+    my $self = shift;
+    return join( '^', map { $self->$_ } qw/xlist_course_id section_id/);
+}
 
 __PACKAGE__->meta->make_immutable;
 

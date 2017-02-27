@@ -16,8 +16,10 @@ has end_date   => ( is => 'rw', isa => DateStr, default => '', lazy => 1, coerce
 
 sub file   { return 'terms.csv'; }
 sub header { return qw/term_id name status start_date end_date/; }
-
-
+sub key {
+    my $self = shift;
+    return $self->term_id;
+}
 
 __PACKAGE__->meta->make_immutable;
 

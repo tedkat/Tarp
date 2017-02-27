@@ -15,6 +15,10 @@ has account_id  => ( is => 'rw', isa => 'Str', default => '', lazy => 1 );
 
 sub file   { return 'groups.csv'; }
 sub header { return qw/group_id name status account_id/; }
+sub key {
+    my $self = shift;
+    return join( '^', map { $self->$_ } qw/group_id account_id/);
+}
 
 __PACKAGE__->meta->make_immutable;
 

@@ -9,7 +9,7 @@ extends 'DBIx::Class::Core';
 
 __PACKAGE__->load_components(qw/FilterColumn/);
 
-__PACKAGE__->table('t_accounts');
+__PACKAGE__->table('c_accounts');
 
 __PACKAGE__->add_columns(
                           account_id         => { data_type => 'text', is_nullable => 0            },
@@ -28,10 +28,19 @@ __PACKAGE__->filter_column(
                                          filter_from_storage => sub { from_json( $_[1] ); },
                                      }
                           );
-                          
+
 sub format {
     my $self = shift;
-    Tarp::Utils::Format::Accounts->new( map { $_ => $self->$_ } Tarp::Utils::Format::Accounts->meta->get_all_attributes );
+    my $f = Tarp::Utils::Format::Accounts->new( map { $_ => $self->$_ } grep { !/extra/ } map { $_->name } Tarp::Utils::Format::Accounts->meta->get_all_attributes );
+    $f->extra( $self->extra );
+    return $f;
+}
+
+sub json {
+    my $self = shift;
+    my %h = map { $_ => $self->$_ } map { $_->name } Tarp::Utils::Format::Accounts->meta->get_all_attributes;
+    $h{extra} = $self->extra;
+    return to_json( \%h );
 }
 
 __PACKAGE__->meta->make_immutable( inline_constructor => 0 );

@@ -35,9 +35,27 @@ __PACKAGE__->filter_column(
                                      }
                           );
 
+sub new {
+    my ( $class, $attrs ) = @_;
+    if ( exists $attrs->{role} && defined $attrs->{role} ) {
+        $attrs->{c_role} = $attrs->{role};
+        delete $attrs->{role};
+    }
+    return $class->next::method($attrs);
+}
+
 sub format {
     my $self = shift;
-    Tarp::Utils::Format::Enrolments->new( map { $_ => $self->$_ } Tarp::Utils::Format::Enrolments->meta->get_all_attributes );
+    my $f = Tarp::Utils::Format::Enrollments->new( map { $_ => $self->$_ } grep { !/extra/ } map { $_->name } Tarp::Utils::Format::Enrollments->meta->get_all_attributes );
+    $f->extra( $self->extra );
+    return $f;
+}
+
+sub json {
+    my $self = shift;
+    my %h = map { $_ => $self->$_ } map { $_->name } Tarp::Utils::Format::Enrollments->meta->get_all_attributes;
+    $h{extra} = $self->extra;
+    return to_json( \%h );
 }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);

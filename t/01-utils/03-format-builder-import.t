@@ -1,6 +1,6 @@
 ###############################################################################################
 ##
-## Tests for Tarp::Utils::Builder::ToDB Factory
+## Tests for Tarp::Utils::Format::Builder::Import Factory
 ##
 ###############################################################################################
 
@@ -14,11 +14,11 @@ use Test::Tarp;
 
 my ( $toDB, $fail, $failmesg, @data, $account );
 
-BEGIN { use_ok 'Tarp::Utils::Builder::ToDB'; }
+BEGIN { use_ok 'Tarp::Utils::Format::Builder::Import'; }
 
 my $test = Test::Tarp->new( SQL => "$FindBin::Bin/../../_SQL" );
 
-ok my $toDB = Tarp::Utils::Builder::ToDB->new( schema => $test->schema, format => 'accounts' ), 'create ToDB';
+ok my $toDB = Tarp::Utils::Format::Builder::Import->new( schema => $test->schema, format => 'accounts' ), 'create Import';
 
 
 ################################################################################################
@@ -39,9 +39,9 @@ like $failmesg, qr/load must be called with a hashref argument/, '->load die mes
 
 ## test successful load
 ok $toDB->load( ($test->accounts_data)[0] ), '->load(' . ($test->accounts_data)[0]->{account_id} . ')';
-is scalar(@{ $toDB->data }), 1, '->data has 1 entry';
+is scalar(keys %{ $toDB->data }), 1, '->data has 1 entry';
 ok( $toDB->load( $_ ), '->load(' . $_->{account_id} . ')' )  foreach ( ($test->accounts_data)[1..3] );
-is scalar(@{ $toDB->data }), 4, '->data has 4 entries';
+is scalar(keys %{ $toDB->data }), 4, '->data has 4 entries';
 
 ##
 ##
@@ -50,26 +50,26 @@ is scalar(@{ $toDB->data }), 4, '->data has 4 entries';
 ##
 
 $account = $toDB->util->new( %{ ($test->accounts_data)[0] } );
-is $toDB->_in_dataset($account), 0, '_in_dataset for first entry is as expected';
+isnt $toDB->_in_dataset($account), undef, '_in_dataset format for first entry is as expected';
 $account = $toDB->util->new( %{ ($test->accounts_data)[3] } );
-is $toDB->_in_dataset($account), 3, '_in_dataset for last entry is as expected';
+isnt $toDB->_in_dataset($account), undef, '_in_dataset format for last entry is as expected';
 $account = $toDB->util->new( account_id => 999, name => 'NO THERE', status => 'active' );
-is $toDB->_in_dataset($account), -1, '_in_dataset return not found as expected';
+is $toDB->_in_dataset($account), undef, '_in_dataset return not found as expected';
 
 
 ################################################################################################
 ##
 ## Test public method ->commit()
-## 
+##
 ##
 
 ## Test expected setup
-$toDB = Tarp::Utils::Builder::ToDB->new( schema => $test->schema, format => 'accounts' );
-cmp_deeply( $toDB->data, [], ' ->data is clear ' );
+$toDB = Tarp::Utils::Format::Builder::Import->new( schema => $test->schema, format => 'accounts' );
+cmp_deeply( $toDB->data, {}, ' ->data is clear ' );
 try { $fail = 1; $failmesg = ''; $toDB->commit; $fail = 0;  } catch { $failmesg = $_; };
 ok !$fail, '->commit nothing to commit works';
 diag( $failmesg ) if ( $failmesg );
-cmp_deeply( $toDB->data, [], ' ->data is clear ' );
+cmp_deeply( $toDB->data, {}, ' ->data is clear ' );
 
 ## Test successful load
 $toDB->load( $_ ) foreach ( $test->accounts_data );
@@ -79,7 +79,7 @@ diag( $failmesg ) if ( $failmesg );
 
 
 ## Test expected setup
-cmp_deeply( $toDB->data, [], ' ->data is clear ' );
+cmp_deeply( $toDB->data, {}, ' ->data is clear ' );
 is $test->schema->resultset('Accounts')->count, 4, 'local db has 4 accounts';
 is $test->schema->resultset('Accounts')->search( { is_dirty => 'C' } )->count, 4, 'local db has 4 is_dirty = "C"';
 
@@ -95,18 +95,20 @@ map { $toDB->load($_) } $test->accounts_data;
 $account = $toDB->rs->search( { account_id => 4 } )->first;
 is $account->is_dirty, 'C', 'db data for account_id = 4 is_dirty C is expected';
 
-## Test With update 
+## Test With update
+my $oldaccount = $account->format;
 $account->name('Updated'); $account->update; ## Do not do in production!!!!!!
 $account = $toDB->rs->search( { account_id => 4 } )->first;
-$toDB->_update_row_if_changed( 3, $account );
+##                            key, $olddata
+$toDB->_update_row_if_changed( $oldaccount, $account );
 $account = $toDB->rs->search( { account_id => 4 } )->first;
 is $account->is_dirty, 'U', 'db data for account_id = 4 is_dirty U is expected';
-is $account->name, $toDB->data->[3]->name, 'db data matches in ->data';
+is $account->name, $toDB->data->{4}->name, 'db data matches in ->data';
 
 ## Test No update
 $account->is_dirty(''); $account->update;
 $account = $toDB->rs->search( { account_id => 4 } )->first;
-$toDB->_update_row_if_changed( 3, $account );
+$toDB->_update_row_if_changed( $account->format, $account );
 is $account->is_dirty, '', 'db data for account_id = 4 is_dirty "" is expected no update';
 
 ##
@@ -137,7 +139,7 @@ $account = $toDB->rs->search( { account_id => 5 } )->first;
 ok !$account, 'account_id 5 not found in db';
 
 ## Test create
-$account = $toDB->util->new( %{ ($test->accounts_data)[3] }, brandnew => 'DATA' ); ## with extra sauce 
+$account = $toDB->util->new( %{ ($test->accounts_data)[3] }, brandnew => 'DATA' ); ## with extra sauce
 $account->account_id( 5 );
 $account->name('BRAND NEW');
 $toDB->_create_row( $account );
