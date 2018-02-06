@@ -1,11 +1,13 @@
 package Tarp::Schema::Result::Courses;
 use Moose;
 use namespace::autoclean;
-
-use Tarp::Utils::Format::Courses;
 use JSON;
 
+use Tarp::Format::Record::Courses;
+
 extends 'DBIx::Class::Core';
+
+with 'Tarp::Schema::Roles::Result';
 
 __PACKAGE__->load_components(qw/FilterColumn/);
 
@@ -33,19 +35,9 @@ __PACKAGE__->filter_column(
                                      }
                           );
 
-sub format {
-    my $self = shift;
-    my $f = Tarp::Utils::Format::Courses->new( map { $_ => $self->$_ } grep { !/extra/ } map { $_->name } Tarp::Utils::Format::Courses->meta->get_all_attributes );
-    $f->extra( $self->extra );
-    return $f;
-}
+__PACKAGE__->might_have( sister => 'Tarp::Schema::Result::tmpCourses' );
 
-sub json {
-    my $self = shift;
-    my %h = map { $_ => $self->$_ } map { $_->name } Tarp::Utils::Format::Courses->meta->get_all_attributes;
-    $h{extra} = $self->extra;
-    return to_json( \%h );
-}
+sub this_record { 'Tarp::Format::Record::Courses' }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 

@@ -1,11 +1,13 @@
 package Tarp::Schema::Result::Enrollments;
 use Moose;
 use namespace::autoclean;
-
-use Tarp::Utils::Format::Enrollments;
 use JSON;
 
+use Tarp::Format::Record::Enrollments;
+
 extends 'DBIx::Class::Core';
+
+with 'Tarp::Schema::Roles::Result';
 
 __PACKAGE__->load_components(qw/FilterColumn/);
 
@@ -35,6 +37,17 @@ __PACKAGE__->filter_column(
                                      }
                           );
 
+__PACKAGE__->might_have(
+                            sister => 'Tarp::Schema::Result::tmpEnrollments',
+                            {
+                                'foreign.course_id'          => 'self.course_id',
+                                'foreign.user_id'            => 'self.user_id',
+                                'foreign.c_role'             => 'self.c_role',
+                                'foreign.section_id'         => 'self.section_id',
+                                'foreign.associated_user_id' => 'self.associated_user_id'
+                            }
+                       );
+
 sub new {
     my ( $class, $attrs ) = @_;
     if ( exists $attrs->{role} && defined $attrs->{role} ) {
@@ -44,19 +57,7 @@ sub new {
     return $class->next::method($attrs);
 }
 
-sub format {
-    my $self = shift;
-    my $f = Tarp::Utils::Format::Enrollments->new( map { $_ => $self->$_ } grep { !/extra/ } map { $_->name } Tarp::Utils::Format::Enrollments->meta->get_all_attributes );
-    $f->extra( $self->extra );
-    return $f;
-}
-
-sub json {
-    my $self = shift;
-    my %h = map { $_ => $self->$_ } map { $_->name } Tarp::Utils::Format::Enrollments->meta->get_all_attributes;
-    $h{extra} = $self->extra;
-    return to_json( \%h );
-}
+sub this_record { 'Tarp::Format::Record::Enrollments' }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 

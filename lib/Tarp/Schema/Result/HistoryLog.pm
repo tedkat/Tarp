@@ -1,7 +1,6 @@
 package Tarp::Schema::Result::HistoryLog;
 use Moose;
 use namespace::autoclean;
-
 use JSON;
 
 extends 'DBIx::Class::Core';

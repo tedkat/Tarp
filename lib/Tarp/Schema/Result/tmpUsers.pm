@@ -1,4 +1,4 @@
-package Tarp::Schema::Result::Users;
+package Tarp::Schema::Result::tmpUsers;
 use Moose;
 use namespace::autoclean;
 use JSON;
@@ -11,7 +11,7 @@ with 'Tarp::Schema::Roles::Result';
 
 __PACKAGE__->load_components(qw/FilterColumn/);
 
-__PACKAGE__->table('c_users');
+__PACKAGE__->table('tmp_users');
 
 __PACKAGE__->add_columns(
                           user_id                    => { data_type => 'text', is_nullable => 0            },
@@ -24,8 +24,7 @@ __PACKAGE__->add_columns(
                           short_name                 => { data_type => 'text', is_nullable => 0            },
                           email                      => { data_type => 'text', is_nullable => 0            },
                           status                     => { data_type => 'text', is_nullable => 0            },
-                          extra                      => { data_type => 'text', is_nullable => 0,           },
-                          is_dirty                   => { data_type => 'char', is_nullable => 0, size => 1 }, ## expect C, U, D, or 0|'' for not dirty
+                          extra                      => { data_type => 'text', is_nullable => 0            },
                         );
 
 __PACKAGE__->set_primary_key('user_id');
@@ -37,7 +36,7 @@ __PACKAGE__->filter_column(
                                      }
                           );
 
-__PACKAGE__->might_have( sister => 'Tarp::Schema::Result::tmpUsers' );
+__PACKAGE__->might_have( sister => 'Tarp::Schema::Result::Users' );
 
 sub this_record { 'Tarp::Format::Record::Users' }
 

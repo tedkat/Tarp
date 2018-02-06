@@ -2,12 +2,14 @@ package Tarp::Utils::Types;
 
 use Type::Library
  -base,
- -declare => qw/Datetime BasicStatus CourseStatus EnrollmentStatus GroupStatus GroupMembershipStatus DateStr OptionalDateStr/;
+ -declare => qw/Datetime BasicStatus CourseStatus EnrollmentStatus GroupStatus GroupMembershipStatus DateStr OptionalDateStr FileORCode/;
 
 use Type::Utils -all;
 use Types::Standard -types;
 
 class_type Datetime, { class => 'DateTime' };
+
+declare FileORCode, where { ref($_) eq 'CODE' or -e -f -r $_ };
 
 declare BasicStatus,
     as Str,
