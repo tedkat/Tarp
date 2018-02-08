@@ -36,6 +36,5 @@ inc/
 
 # Project specific
 config.json
-/script/local_sis_code_to_tarp.pl
-/script/local_files_to_tarp.pl
+/script/local*
 
