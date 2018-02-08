@@ -61,6 +61,23 @@ sub updates {
     return \@zips;
 }
 
+sub all {
+    my $self = shift;
+    my @zips;
+    for my $rs_class ( qw/Accounts Terms Courses Users Sections Enrollments/ ) {
+        my $zip = Archive::Zip->new;
+        if ( _add_member_zip( 
+                                $zip,
+                                "Tarp::Format::File::$rs_class"->new,
+                                $self->schema->resultset($rs_class)->search_rs({ is_dirty => { -not_in => [qw/C U D/] }})
+                            )
+           ) {
+            push @zips, { zip => $zip, string => $rs_class };
+        }
+    }
+    return \@zips;
+}
+
 sub _add_member_zip {
     my ( $zip, $format_file, $resultset  ) = @_;
     for my $row ( $resultset->all ) {

@@ -52,13 +52,41 @@ sub push_changes {
                 while ( $keep_going ) {
                     sleep 5;
                     $response = $self->CanvasCloud->api('sisimports', scheme => $self->config->{CanvasCloud}{scheme})->status( $id );
-                    $keep_going = 0 if ( (!exists $response->{workflow_state}) || $response->{workflow_state} ne 'importing' );
-                }
+                    $keep_going = 0 if ( 
+                                            (!exists $response->{workflow_state})
+                                        || ( exists $response->{progress} && $response->{progress} == 100 )
+                                        || (  $response->{workflow_state} =~ m/^(imported|failed).*/ )
+                                    );                }
                 ## TODO: emit finished responses for further processing
             }
         }
     }
     return 1;
+}
+
+sub push_all {
+    my $self   = shift;
+    my $export = Tarp::Export->new( schema => $self->schema );
+    my $zips   = $export->all;
+    my @returns;
+    if ( ref($zips) eq 'ARRAY' && @$zips ) {
+        for my $zip ( @$zips ) {
+            my $response = $self->CanvasCloud->api('sisimports', scheme => $self->config->{CanvasCloud}{scheme})->sendzip( $zip );
+            my $id = $response->{id} || die 'sisimports response is unexpected!!! '. to_json($response) . ' !!!';
+            my $keep_going = 1;
+            while ( $keep_going ) {
+                sleep 5;
+                $response = $self->CanvasCloud->api('sisimports', scheme => $self->config->{CanvasCloud}{scheme})->status( $id );
+                $keep_going = 0 if ( 
+                                        (!exists $response->{workflow_state})
+                                     || ( exists $response->{progress} && $response->{progress} == 100 )
+                                     || (  $response->{workflow_state} =~ m/^(imported|failed).*/ )
+                                   );
+            }
+            push @returns, $response;
+        }
+    }
+    return @returns;
 }
 
 __PACKAGE__->meta->make_immutable;
