@@ -31,20 +31,24 @@ sub BUILD {
 
         ## Perform DB Load to Tmp Table
         if ( ref( $self->$load ) eq 'CODE' ) {
-            try {
-                _parse_data( $format, $load_rs, $self->$load->() )
-            }
-            catch {
-                die 'Import(CODE) Failed tmp' . $load . ' : ' . $_ . "\n";
-            };
+            $self->schema->txn_do( sub { 
+                try {
+                    _parse_data( $format, $load_rs, $self->$load->() )
+                }
+                catch {
+                    die 'Import(CODE) Failed tmp' . $load . ' : ' . $_ . "\n";
+                };
+            });
         }
         else {
-            try {
-                _parse_file( $format, $load_rs, $self->$load );
-            }
-            catch {
-                die 'Import(FILE:' . $self->$load . ') Failed tmp' . $load . ' : ' . $_ . "\n";
-            };
+            $self->schema->txn_do( sub {
+                try {
+                    _parse_file( $format, $load_rs, $self->$load );
+                }
+                catch {
+                    die 'Import(FILE:' . $self->$load . ') Failed tmp' . $load . ' : ' . $_ . "\n";
+                };
+            });
         }
     }
 }
@@ -60,56 +64,62 @@ sub BUILD {
 sub updates {
     my $self = shift;
     my $counter = 0;
-    ## Get Deleted users and update the data
-    for my $user ( $self->schema->resultset('Users')->not_in_sister->all ) {
-        $user->login_id(  'xxx'     . $user->user_id );
-        $user->password( 'xxxxxxx' . $user->user_id );
-        $user->is_dirty('U');
-        $user->update;
-        $counter++;
-    }
-    ## Get all possible updates
-    for my $rs_class ( @CLASSIFY ) {
-        for my $row ( $self->schema->resultset($rs_class)->in_sister->all ) {
-            my $krow = $row->to_pruned_hash;
-            my $trow = $row->sister->to_pruned_hash;
-            ## for data we care about check if update is nessesary
-            if ( ! eq_deeply( $krow, $trow ) ) {
-                map { $row->$_( $trow->{$_} ) } keys %$krow;
-                $row->extra( $row->sister->extra );
-                $row->is_dirty('U');
-                $row->update;
-                $counter++;
-            }
-            elsif ( ! eq_deeply( $row->extra, $row->sister->extra ) ) {
-                $row->extra( $row->sister->extra );
-                $row->update;
+    $self->schema->txn_do( sub {
+        ## Get Deleted users and update the data
+        for my $user ( $self->schema->resultset('Users')->not_in_sister->all ) {
+            $user->login_id(  'xxx'     . $user->user_id );
+            $user->password( 'xxxxxxx' . $user->user_id );
+            $user->is_dirty('U');
+            $user->update;
+            $counter++;
+        }
+        ## Get all possible updates
+        for my $rs_class ( @CLASSIFY ) {
+            for my $row ( $self->schema->resultset($rs_class)->in_sister->all ) {
+                my $krow = $row->to_pruned_hash;
+                my $trow = $row->sister->to_pruned_hash;
+                ## for data we care about check if update is nessesary
+                if ( ! eq_deeply( $krow, $trow ) ) {
+                    map { $row->$_( $trow->{$_} ) } keys %$krow;
+                    $row->extra( $row->sister->extra );
+                    $row->is_dirty('U');
+                    $row->update;
+                    $counter++;
+                }
+                elsif ( ! eq_deeply( $row->extra, $row->sister->extra ) ) {
+                    $row->extra( $row->sister->extra );
+                    $row->update;
+                }
             }
         }
-    }
+    });
     return $counter;
 }
 
 sub deletes {
     my $self = shift;
     my $counter = 0;
-    for my $rs_class ( @CLASSIFY ) {
-        $counter += $self->schema->resultset($rs_class)->not_in_sister->update( { is_dirty => 'D' } );
-    }
+    $self->schema->txn_do( sub {
+        for my $rs_class ( @CLASSIFY ) {
+            $counter += $self->schema->resultset($rs_class)->not_in_sister->update( { is_dirty => 'D' } );
+        }
+    });
     return $counter;
 }
 
 sub creates {
     my $self = shift;
     my $counter = 0;
-    for my $rs_class ( @CLASSIFY ) {
-        for my $row ( $self->schema->resultset('tmp'.$rs_class)->not_in_sister->all ) {
-            my $new_row = $row->record->to_hash;
-            $new_row->{is_dirty} = 'C';
-            $self->schema->resultset($rs_class)->create( $new_row );
-            $counter++;
+    $self->schema->txn_do( sub {
+        for my $rs_class ( @CLASSIFY ) {
+            for my $row ( $self->schema->resultset('tmp'.$rs_class)->not_in_sister->all ) {
+                my $new_row = $row->record->to_hash;
+                $new_row->{is_dirty} = 'C';
+                $self->schema->resultset($rs_class)->create( $new_row );
+                $counter++;
+            }
         }
-    }
+    });
     return $counter;
 }
 
