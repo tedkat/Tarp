@@ -37,4 +37,5 @@ inc/
 # Project specific
 config.json
 /script/local*
+test*
 
