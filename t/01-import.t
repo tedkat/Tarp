@@ -24,12 +24,12 @@ subtest 'Code Import' => sub {
         Enrollments => sub { $testtarp->enrollments_data },
         schema      => $testtarp->schema
     ), "Tarp::Import->new( key => sub { return [] } )";
-    is $testtarp->schema->resultset('tmpAccounts')->count, scalar( $testtarp->accounts_data->@* ), 'tmpAccounts Count';
-    is $testtarp->schema->resultset('tmpTerms')->count, scalar( $testtarp->terms_data->@* ), 'tmpTerms Count';
-    is $testtarp->schema->resultset('tmpCourses')->count, scalar( $testtarp->courses_data->@* ), 'tmpCourses Count';
-    is $testtarp->schema->resultset('tmpUsers')->count, scalar( $testtarp->users_data->@* ), 'tmpUsers Count';
-    is $testtarp->schema->resultset('tmpSections')->count, scalar( $testtarp->sections_data->@* ), 'tmpSections Count';
-    is $testtarp->schema->resultset('tmpEnrollments')->count, scalar( $testtarp->enrollments_data->@* ), 'tmpEnrollments Count';
+    is $testtarp->schema->resultset('tmpAccounts')->count, scalar( @{ $testtarp->accounts_data } ), 'tmpAccounts Count';
+    is $testtarp->schema->resultset('tmpTerms')->count, scalar( @{ $testtarp->terms_data } ), 'tmpTerms Count';
+    is $testtarp->schema->resultset('tmpCourses')->count, scalar( @{ $testtarp->courses_data } ), 'tmpCourses Count';
+    is $testtarp->schema->resultset('tmpUsers')->count, scalar( @{ $testtarp->users_data } ), 'tmpUsers Count';
+    is $testtarp->schema->resultset('tmpSections')->count, scalar( @{ $testtarp->sections_data } ), 'tmpSections Count';
+    is $testtarp->schema->resultset('tmpEnrollments')->count, scalar( @{ $testtarp->enrollments_data } ), 'tmpEnrollments Count';
 };
 
 ## Test FILE data loading ########################
@@ -44,14 +44,14 @@ subtest 'File Import' => sub {
         Enrollments => $testtarp->enrollments_data_file,
     };
     ## create new args out of $mapped
-    @args = map { $_ => ''.$mapped->{$_} } keys $mapped->%*;
+    @args = map { $_ => ''.$mapped->{$_} } keys %{ $mapped };
     ok my $import = Tarp::Import->new( @args, schema => $testtarp->schema ), 'Tarp::Import->new( key => "file.csv" )';
-    is $testtarp->schema->resultset('tmpAccounts')->count, scalar( $testtarp->accounts_data->@* ), 'tmpAccounts Count';
-    is $testtarp->schema->resultset('tmpTerms')->count, scalar( $testtarp->terms_data->@* ), 'tmpTerms Count';
-    is $testtarp->schema->resultset('tmpCourses')->count, scalar( $testtarp->courses_data->@* ), 'tmpCourses Count';
-    is $testtarp->schema->resultset('tmpUsers')->count, scalar( $testtarp->users_data->@* ), 'tmpUsers Count';
-    is $testtarp->schema->resultset('tmpSections')->count, scalar( $testtarp->sections_data->@* ), 'tmpSections Count';
-    is $testtarp->schema->resultset('tmpEnrollments')->count, scalar( $testtarp->enrollments_data->@* ), 'tmpEnrollments Count';
+    is $testtarp->schema->resultset('tmpAccounts')->count, scalar( @{ $testtarp->accounts_data } ), 'tmpAccounts Count';
+    is $testtarp->schema->resultset('tmpTerms')->count, scalar( @{ $testtarp->terms_data } ), 'tmpTerms Count';
+    is $testtarp->schema->resultset('tmpCourses')->count, scalar( @{ $testtarp->courses_data } ), 'tmpCourses Count';
+    is $testtarp->schema->resultset('tmpUsers')->count, scalar( @{ $testtarp->users_data } ), 'tmpUsers Count';
+    is $testtarp->schema->resultset('tmpSections')->count, scalar( @{ $testtarp->sections_data } ), 'tmpSections Count';
+    is $testtarp->schema->resultset('tmpEnrollments')->count, scalar( @{ $testtarp->enrollments_data } ), 'tmpEnrollments Count';
 };
 
 
@@ -72,12 +72,12 @@ subtest 'Code Import creates updates deletes' => sub {
         ), "Tarp::Import->new( key => sub { return [] } )";
         is $import->creates,
             (
-                scalar( $testtarp->accounts_data->@* )
-                + scalar( $testtarp->terms_data->@* )
-                + scalar( $testtarp->courses_data->@* )
-                + scalar( $testtarp->users_data->@* )
-                + scalar( $testtarp->sections_data->@* )
-                + scalar( $testtarp->enrollments_data->@* )
+                scalar( @{ $testtarp->accounts_data } )
+                + scalar( @{ $testtarp->terms_data } )
+                + scalar( @{ $testtarp->courses_data } )
+                + scalar( @{ $testtarp->users_data } )
+                + scalar( @{ $testtarp->sections_data } )
+                + scalar( @{ $testtarp->enrollments_data } )
             ),
             "creates total count";
         is $import->deletes, 0, "deletes total count";
@@ -106,12 +106,12 @@ subtest 'Code Import creates updates deletes' => sub {
         is $import->creates, 0, "creates total count";
         is $import->updates,
             (
-                scalar( $testtarp->accounts_data->@* )
-                + scalar( $testtarp->terms_data->@* )
-                + scalar( $testtarp->courses_data->@* )
-                + scalar( $testtarp->users_data->@* )
-                + scalar( $testtarp->sections_data->@* )
-                + scalar( $testtarp->enrollments_data->@* )
+                scalar( @{ $testtarp->accounts_data } )
+                + scalar( @{ $testtarp->terms_data } )
+                + scalar( @{ $testtarp->courses_data } )
+                + scalar( @{ $testtarp->users_data } )
+                + scalar( @{ $testtarp->sections_data } )
+                + scalar( @{ $testtarp->enrollments_data } )
             ),
             "updates total count";
         is $import->deletes, 0, "deletes total count";
@@ -137,12 +137,12 @@ subtest 'Code Import creates updates deletes' => sub {
         ##
         is $import->deletes,
             (
-                scalar( $testtarp->accounts_data->@* )
-                + scalar( $testtarp->terms_data->@* )
-                + scalar( $testtarp->courses_data->@* )
-                + scalar( $testtarp->users_data->@* )
-                + scalar( $testtarp->sections_data->@* )
-                + scalar( $testtarp->enrollments_data->@* )
+                scalar( @{ $testtarp->accounts_data } )
+                + scalar( @{ $testtarp->terms_data } )
+                + scalar( @{ $testtarp->courses_data } )
+                + scalar( @{ $testtarp->users_data } )
+                + scalar( @{ $testtarp->sections_data } )
+                + scalar( @{ $testtarp->enrollments_data } )
             ),
             "deletes total count";
     };

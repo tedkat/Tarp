@@ -45,7 +45,7 @@ my $tarp_import = Tarp::Import->new(
                                         schema      => $testtarp->schema
                                    );
 
-ok $tarp->push_changes( $tarp_import ), 'Push No Changes'; ## nothing todo here
+ok !$tarp->push_changes( $tarp_import ), 'Push No Changes'; ## nothing todo here
 
 $tarp_import = Tarp::Import->new(
                                         Accounts    => sub { $testtarp->accounts_data },

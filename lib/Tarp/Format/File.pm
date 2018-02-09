@@ -20,8 +20,8 @@ package Tarp::Format::File
         
         my $text = $self->csv->string;
         
-        for my $record ( $self->records->@* ) {
-            $self->csv->combine( $record->to_array_of_columns->@* );
+        for my $record ( @{ $self->records } ) {
+            $self->csv->combine( @{ $record->to_array_of_columns } );
             $text .= $self->csv->string;
         }
         return $text;

@@ -30,12 +30,12 @@ my $import = Tarp::Import->new(
 $import->creates;
 
 subtest 'db sanity check' => sub {
-    is $testtarp->schema->resultset('Accounts')->count, scalar( $testtarp->accounts_data->@* ), 'Accounts Count';
-    is $testtarp->schema->resultset('Terms')->count, scalar( $testtarp->terms_data->@* ), 'Terms Count';
-    is $testtarp->schema->resultset('Courses')->count, scalar( $testtarp->courses_data->@* ), 'Courses Count';
-    is $testtarp->schema->resultset('Users')->count, scalar( $testtarp->users_data->@* ), 'Users Count';
-    is $testtarp->schema->resultset('Sections')->count, scalar( $testtarp->sections_data->@* ), 'Sections Count';
-    is $testtarp->schema->resultset('Enrollments')->count, scalar( $testtarp->enrollments_data->@* ), 'Enrollments Count';
+    is $testtarp->schema->resultset('Accounts')->count, scalar( @{ $testtarp->accounts_data } ), 'Accounts Count';
+    is $testtarp->schema->resultset('Terms')->count, scalar( @{ $testtarp->terms_data } ), 'Terms Count';
+    is $testtarp->schema->resultset('Courses')->count, scalar( @{ $testtarp->courses_data } ), 'Courses Count';
+    is $testtarp->schema->resultset('Users')->count, scalar( @{ $testtarp->users_data } ), 'Users Count';
+    is $testtarp->schema->resultset('Sections')->count, scalar( @{ $testtarp->sections_data } ), 'Sections Count';
+    is $testtarp->schema->resultset('Enrollments')->count, scalar( @{ $testtarp->enrollments_data } ), 'Enrollments Count';
 };
 
 subtest 'export' => sub {

@@ -31,7 +31,7 @@ sub to_pruned_hash {
 
 sub record {
     my $self = shift;
-    my $record = $self->this_record->new( $self->to_pruned_hash->%* );
+    my $record = $self->this_record->new( %{ $self->to_pruned_hash } );
     $record->extra( $self->extra );
     return $record;
 }

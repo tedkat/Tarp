@@ -64,15 +64,15 @@ sub to_csv_file_string {
     my $arrayref = shift;
     my %columns;
     my $string;
-    for my $r ( $arrayref->@* ) {
-        for my $k ( keys $r->%* ) {
+    for my $r ( @{ $arrayref } ) {
+        for my $k ( keys %{ $r } ) {
             $columns{$k} = 1;
         }
     }
     my $csv = Text::CSV->new;
     $csv->combine( sort keys %columns );
     $string .= $csv->string . "\n";
-    for my $r ( $arrayref->@* ) {
+    for my $r ( @{ $arrayref } ) {
         my @cols;
         for my $k ( sort keys %columns ) {
             my $this_col = '';
