@@ -108,7 +108,12 @@ sub deletes {
     print STDERR __PACKAGE__, '->deletes' if ( $self->debug );
     $self->schema->txn_do( sub {
         for my $rs_class ( @CLASSIFY ) {
-            $counter += $self->schema->resultset($rs_class)->not_in_sister->update( { is_dirty => 'D' } );
+            my @rows = $self->schema->resultset($rs_class)->not_in_sister->all;
+            next unless ( @rows );
+            for my $row ( @rows ) {
+                $row->update( { is_dirty => 'D' } );
+            }
+            $counter += scalar( @rows );
         }
     });
     print STDERR "->done($counter records)\n" if ( $self->debug );
