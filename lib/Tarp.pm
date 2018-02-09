@@ -14,6 +14,7 @@ use Tarp::Export;
 #Public
 has configfile => ( is => 'ro', required => 1 );
 has schema => ( is => 'ro', writer => '_schema' );
+has debug => ( is => 'rw', default => 0 );
 
 #Private
 has config => ( is => 'ro', writer => '_config', init_arg => undef );
@@ -32,45 +33,36 @@ sub BUILD {
 
 sub push_changes {
     my $self = shift;
-    my $import = shift || Tarp::Import->new( schema => $self->schema, map { $_ => $_.'.csv' } qw/Accounts Terms Courses Users Sections Enrollments/ );
+    print STDERR __PACKAGE__, "->push_changes\n" if ( $self->debug );
+    my $import = shift || Tarp::Import->new( debug => $self->debug, schema => $self->schema, map { $_ => $_.'.csv' } qw/Accounts Terms Courses Users Sections Enrollments/ );
     ## check for Tarp::Import Object for safty dance
     die 'push_changes( "Tarp::Import" ) need Tarp::Import object!' unless ( ref( $import ) eq 'Tarp::Import' );
 
-    my ( $export, $zips );
+    my ( $export, $zips, @returns );
 
-    $export = Tarp::Export->new( schema => $self->schema );
+    $export = Tarp::Export->new( debug => $self->debug, schema => $self->schema );
 
     for my $change_type ( qw/updates deletes creates/ ) {
         $import->$change_type;
-        $zips = $export->$change_type;
-
-        if ( ref($zips) eq 'ARRAY' && @$zips ) {
-            for my $zip ( @$zips ) {
-                my $response = $self->CanvasCloud->api('sisimports', scheme => $self->config->{CanvasCloud}{scheme})->sendzip( $zip );
-                my $id = $response->{id} || die 'sisimports response is unexpected!!! '. to_json($response) . ' !!!';
-                my $keep_going = 1;
-                while ( $keep_going ) {
-                    sleep 5;
-                    $response = $self->CanvasCloud->api('sisimports', scheme => $self->config->{CanvasCloud}{scheme})->status( $id );
-                    $keep_going = 0 if ( 
-                                            (!exists $response->{workflow_state})
-                                        || ( exists $response->{progress} && $response->{progress} == 100 )
-                                        || (  $response->{workflow_state} =~ m/^(imported|failed).*/ )
-                                    );                }
-                ## TODO: emit finished responses for further processing
-            }
-        }
+        push @returns, $self->send_zips( $export->$change_type, 'push_changes:'.$change_type );
     }
-    return 1;
+    return @returns;
 }
 
 sub push_all {
     my $self   = shift;
+    print STDERR __PACKAGE__, "->push_all\n" if ( $self->debug );
     my $export = Tarp::Export->new( schema => $self->schema );
-    my $zips   = $export->all;
+    return $self->send_zips( $export->all, 'push_all' );
+}
+
+
+sub send_zips {
+    my ( $self, $zips, $type ) = @_;
     my @returns;
     if ( ref($zips) eq 'ARRAY' && @$zips ) {
         for my $zip ( @$zips ) {
+            print STDERR __PACKAGE__, "->send_zips($zip->{string}, $type)" if ( $self->debug );
             my $response = $self->CanvasCloud->api('sisimports', scheme => $self->config->{CanvasCloud}{scheme})->sendzip( $zip );
             my $id = $response->{id} || die 'sisimports response is unexpected!!! '. to_json($response) . ' !!!';
             my $keep_going = 1;
@@ -83,7 +75,13 @@ sub push_all {
                                      || (  $response->{workflow_state} =~ m/^(imported|failed).*/ )
                                    );
             }
+            print STDERR "->done\n" if ( $self->debug );
             push @returns, $response;
+            $self->schema->resultset('HistoryLog')->create({
+                                                                domainspace        => 'Tarp::push_changes::sendzip',
+                                                                nametag            => $type,
+                                                                jsondata           => $response,
+                                                          });
         }
     }
     return @returns;

@@ -8,13 +8,14 @@ use Archive::Zip qw/:ERROR_CODES :CONSTANTS/;
 use Tarp::Format;
 
 has schema => ( is => 'ro', required => 1 );
+has debug  => ( is => 'rw', default  => 0 );
 
 ## Public
 
 sub deletes {
     my $self = shift;
     my @zips;
-
+    print STDERR __PACKAGE__, '->deletes' if ( $self->debug );
     for my $run ( ['Enrollments'], ['Sections'], [qw/Accounts Terms Courses Users/]  ) {
         my ( $zip, @members ) = ( Archive::Zip->new );
         for my $rs_class ( @$run ) {
@@ -25,13 +26,14 @@ sub deletes {
         }
         push @zips, { zip => $zip, string => join('_', @members) } if ( @members );
     }
+    print STDERR sprintf('->done(%s zip files)', scalar(@zips)), "\n" if ( $self->debug );
     return \@zips;
 }
 
 sub creates {
     my $self = shift;
     my @zips;
-
+    print STDERR __PACKAGE__, '->creates' if ( $self->debug );
     for my $run ( [qw/Accounts Terms Courses Users/], ['Sections'], ['Enrollments'] ) {
         my ( $zip, @members ) = ( Archive::Zip->new );
         for my $rs_class ( @$run ) {
@@ -42,7 +44,7 @@ sub creates {
         }
         push @zips, { zip => $zip, string => join('_', @members) } if ( @members );
     }
-
+    print STDERR sprintf('->done(%s zip files)', scalar(@zips)), "\n" if ( $self->debug );
     return \@zips;
 }
 
@@ -50,7 +52,7 @@ sub creates {
 sub updates {
     my $self = shift;
     my ( $zip, @zips, @members ) = ( Archive::Zip->new );
-
+    print STDERR __PACKAGE__, '->updates' if ( $self->debug );
     for my $rs_class ( qw/Accounts Terms Courses Users Sections Enrollments/ ) {
         if ( _add_member_zip( $zip, "Tarp::Format::File::$rs_class"->new, $self->schema->resultset($rs_class)->search_rs({ is_dirty => 'U'})) ) {
           push @members, $rs_class;
@@ -58,12 +60,14 @@ sub updates {
         }
     }
     push @zips, { zip => $zip, string => join('_', @members) } if ( @members );
+    print STDERR sprintf('->done(%s zip files)', scalar(@zips)), "\n" if ( $self->debug );
     return \@zips;
 }
 
 sub all {
     my $self = shift;
     my @zips;
+    print STDERR __PACKAGE__, '->all' if ( $self->debug );
     for my $rs_class ( qw/Accounts Terms Courses Users Sections Enrollments/ ) {
         my $zip = Archive::Zip->new;
         if ( _add_member_zip( 
@@ -75,6 +79,7 @@ sub all {
             push @zips, { zip => $zip, string => $rs_class };
         }
     }
+    print STDERR sprintf('->done(%s zip files)', scalar(@zips)), "\n" if ( $self->debug );
     return \@zips;
 }
 

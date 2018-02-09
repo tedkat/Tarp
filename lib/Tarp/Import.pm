@@ -14,6 +14,7 @@ my @CLASSIFY = qw/Accounts Terms Courses Users Sections Enrollments/;
 ## Public
 has [ @CLASSIFY ] => ( is => 'ro', isa => FileORCode, required => 1 );
 has schema        => ( is => 'ro', required => 1 );
+has debug         => ( is => 'rw', default  => 0 );
 
 ## Private
 
@@ -31,6 +32,7 @@ sub BUILD {
 
         ## Perform DB Load to Tmp Table
         if ( ref( $self->$load ) eq 'CODE' ) {
+            print STDERR __PACKAGE__, '->parse_data('.$load.')' if ( $self->debug );
             $self->schema->txn_do( sub { 
                 try {
                     _parse_data( $format, $load_rs, $self->$load->() )
@@ -41,6 +43,7 @@ sub BUILD {
             });
         }
         else {
+            print STDERR __PACKAGE__, '->parse_file('.$load.')' if ( $self->debug );
             $self->schema->txn_do( sub {
                 try {
                     _parse_file( $format, $load_rs, $self->$load );
@@ -50,6 +53,7 @@ sub BUILD {
                 };
             });
         }
+        print STDERR "->done\n" if ( $self->debug );
     }
 }
 
@@ -64,6 +68,7 @@ sub BUILD {
 sub updates {
     my $self = shift;
     my $counter = 0;
+    print STDERR __PACKAGE__, '->updates' if ( $self->debug );
     $self->schema->txn_do( sub {
         ## Get Deleted users and update the data
         for my $user ( $self->schema->resultset('Users')->not_in_sister->all ) {
@@ -93,23 +98,27 @@ sub updates {
             }
         }
     });
+    print STDERR "->done($counter records)\n" if ( $self->debug );
     return $counter;
 }
 
 sub deletes {
     my $self = shift;
     my $counter = 0;
+    print STDERR __PACKAGE__, '->deletes' if ( $self->debug );
     $self->schema->txn_do( sub {
         for my $rs_class ( @CLASSIFY ) {
             $counter += $self->schema->resultset($rs_class)->not_in_sister->update( { is_dirty => 'D' } );
         }
     });
+    print STDERR "->done($counter records)\n" if ( $self->debug );
     return $counter;
 }
 
 sub creates {
     my $self = shift;
     my $counter = 0;
+    print STDERR __PACKAGE__, '->creates' if ( $self->debug );
     $self->schema->txn_do( sub {
         for my $rs_class ( @CLASSIFY ) {
             for my $row ( $self->schema->resultset('tmp'.$rs_class)->not_in_sister->all ) {
@@ -120,6 +129,7 @@ sub creates {
             }
         }
     });
+    print STDERR "->done($counter records)\n" if ( $self->debug );
     return $counter;
 }
 
