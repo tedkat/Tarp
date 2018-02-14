@@ -4,6 +4,7 @@ use Moose;
 use namespace::autoclean;
 use JSON;
 use Path::Tiny;
+use DateTime;
 
 use CanvasCloud;
 use Tarp::Schema;
@@ -82,6 +83,12 @@ sub send_zips {
                                                                 nametag            => $type,
                                                                 jsondata           => $response,
                                                           });
+            if ( $response->{workflow_state} =~ m/^failed/ ) {
+                my $dt = DateTime->now;
+                my $file = '/tmp/canvas-' . $dt->ymd('_') . 'T' . $dt->hms('_') . "-$zip->{string}.zip";
+                $zip->{zip}->writeToFileNamed($file);
+                warn "FAILURE FOUND: ($file)\n", to_json($response, {pretty=>1});
+            }
         }
     }
     return @returns;
