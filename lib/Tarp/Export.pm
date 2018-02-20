@@ -83,6 +83,24 @@ sub all {
     return \@zips;
 }
 
+sub raw {
+    my $self = shift;
+    print STDERR __PACKAGE__, '->raw' if ( $self->debug );
+    my $type = shift || die '$type required';
+    my $data = shift || die '$data required';
+
+    my $zip = Archive::Zip->new;
+    my $format_file = "Tarp::Format::File::$type"->new;
+    for my $r ( @$data ) {
+        $format_file->add_record( "Tarp::Format::Record::$type"->new( %$r ) )
+    }
+    if ( $format_file->has_records ) {
+        my $m = $zip->addString( $format_file->to_string, $format_file->file );
+        $m->desiredCompressionMethod(8); ## COMPRESSION_DEFLATED
+    }
+    return $zip;
+}
+
 sub _add_member_zip {
     my ( $zip, $format_file, $resultset  ) = @_;
     for my $row ( $resultset->all ) {
