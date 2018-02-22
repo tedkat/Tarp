@@ -91,54 +91,42 @@ sub reconcile {
 
     for my $tid ( @tarp_terms ) {
         print STDERR __PACKAGE__, "->reconcile: Term->", $term_map{$tid}{name}, "\n" if ( $self->debug );
+
         my $can_report = $self->CanvasCloud->api('reports', scheme => $self->config->{CanvasCloud}{scheme});
-        my $can_result = $can_report->run( 'sis_export_csv', { 'parameters[enrollment_term_id]' => $term_map{$tid}{id}, 'parameters[enrollments]' => 1 } );
-        #warn to_json( $can_result, {pretty=>1});
-        while ( $can_result->{status} eq 'running' ) {
-            sleep 10; 
-            $can_result = $can_report->check( 'sis_export_csv', $can_result->{id} );
-        }
-        if ( exists $can_result->{attachment} && exists $can_result->{attachment}{url} ) {
-            my $resp = $can_report->ua->get( $can_result->{attachment}{url} ); ## Download report without using class specific headers
-            die $resp->status_line unless ( $resp->is_success );
-            my $text = $resp->decoded_content( charset => 'none' );
-            my %sections;
-            my $io = IO::String->new($text);
-            my $csv = Text::CSV->new;
-            $csv->column_names( $csv->getline( $io ) );
-            while ( my $row = $csv->getline_hr($io) ) {
-                if ( $row->{user_id} ne '' && ( $row->{role} eq 'student' || $row->{role} eq 'teacher' ) ) {
-                   $sections{ $row->{section_id} }{ $row->{user_id} } = $row;
-                }
-            }
-            for my $s ( keys %sections ) {
-                for my $e ( $self->schema->resultset('Enrollments')->search_rs( { section_id => $s } )->all ) {
-                    if ( exists $sections{$s}{$e->user_id} ) {
-                        if ( $e->status ne $sections{$s}{$e->user_id}{status} ) {
-                            push @{ $Return{DIFF} }, $e->to_pruned_hash;
-                            print STDERR "X" if ( $self->debug ); ## DIFF
-                        }
-                    }
-                    else {
-                        if ( $e->status eq 'active' ) { #ignore deleted status if not in download
-                             push @{ $Return{NotInDownload} }, $e->to_pruned_hash;
-                             print STDERR 'T' if ( $self->debug ); ## NotInDowload
-                        }
-                    }
-                    delete $sections{$s}{$e->user_id};
-                }
-                for my $e ( keys %{ $sections{$s} } ) {
-                    if ( $sections{$s}{$e}{status} eq 'active' ) {
-                        $sections{$s}{$e}{status} = 'deleted';
-                        push @{ $Return{NotInTarp} }, $sections{$s}{$e};
-                        print STDERR 'D'if ( $self->debug ); ## NotInTarp
-                    }
-                }
+        my $text = $can_report->get( 'sis_export_csv', { 'parameters[enrollment_term_id]' => $term_map{$tid}{id}, 'parameters[enrollments]' => 1 } );
+
+        my %sections;
+        my $io = IO::String->new($text);
+        my $csv = Text::CSV->new;
+        $csv->column_names( $csv->getline( $io ) );
+        while ( my $row = $csv->getline_hr($io) ) {
+            if ( $row->{user_id} ne '' && ( $row->{role} eq 'student' || $row->{role} eq 'teacher' ) ) {
+                $sections{ $row->{section_id} }{ $row->{user_id} } = $row;
             }
         }
-        else {
-             print STDERR __PACKAGE__, "->reconcile: download attachment url not presseent in response\n" if ( $self->debug );
-             next;
+        for my $s ( keys %sections ) {
+            for my $e ( $self->schema->resultset('Enrollments')->search_rs( { section_id => $s } )->all ) {
+                if ( exists $sections{$s}{$e->user_id} ) {
+                    if ( $e->status ne $sections{$s}{$e->user_id}{status} ) {
+                        push @{ $Return{DIFF} }, $e->to_pruned_hash;
+                        print STDERR "X" if ( $self->debug ); ## DIFF
+                    }
+                }
+                else {
+                    if ( $e->status eq 'active' ) { #ignore deleted status if not in download
+                            push @{ $Return{NotInDownload} }, $e->to_pruned_hash;
+                            print STDERR 'T' if ( $self->debug ); ## NotInDowload
+                    }
+                }
+                delete $sections{$s}{$e->user_id};
+            }
+            for my $e ( keys %{ $sections{$s} } ) {
+                if ( $sections{$s}{$e}{status} eq 'active' ) {
+                    $sections{$s}{$e}{status} = 'deleted';
+                    push @{ $Return{NotInTarp} }, $sections{$s}{$e};
+                    print STDERR 'D'if ( $self->debug ); ## NotInTarp
+                }
+            }
         }
         print STDERR "\n" if ( $self->debug );
     }
