@@ -59,80 +59,6 @@ sub push_all {
     return $self->send_zips( $export->all, 'push_all' );
 }
 
-sub reconcile {
-    my $self = shift;
-    my $type = shift || '';
-
-    my $csv = Text::CSV->new;
-
-    print STDERR __PACKAGE__, "->reconcile($type)\n" if ( $self->debug );
-    
-    # GET Canvas Terms
-    my %term_map;
-    for my $t ( @{ $self->CanvasCloud->api('terms', scheme => $self->config->{CanvasCloud}{scheme})->list->{enrollment_terms} } ) {
-        if ( exists $t->{sis_term_id} && defined $t->{sis_term_id} ) {
-            $term_map{ $t->{sis_term_id} } = $t;
-        }
-    }
-    
-    # Get Current Tarp Terms which are mapped
-    my @tarp_terms;
-    for my $t ( $self->schema->resultset('Terms')->all ) {
-        if ( my $end_dt = DateTime::Format::ISO8601->parse_datetime( $t->end_date ) ) {
-            if ( my $start_dt = DateTime::Format::ISO8601->parse_datetime( $t->start_date ) ) {
-                if ( DateTime->now <= $end_dt && DateTime->now >= $start_dt && exists $term_map{ $t->term_id } ) {
-                    push @tarp_terms, $t->term_id;
-                }
-            }
-        }
-    }
-
-    my %Return = ( DIFF => [], NotInTarp => [], NotInDownload => [] );
-
-    for my $tid ( @tarp_terms ) {
-        print STDERR __PACKAGE__, "->reconcile: Term->", $term_map{$tid}{name}, "\n" if ( $self->debug );
-
-        my $can_report = $self->CanvasCloud->api('reports', scheme => $self->config->{CanvasCloud}{scheme});
-        my $text = $can_report->get( 'sis_export_csv', { 'parameters[enrollment_term_id]' => $term_map{$tid}{id}, 'parameters[enrollments]' => 1 } );
-
-        my %sections;
-        my $io = IO::String->new($text);
-        my $csv = Text::CSV->new;
-        $csv->column_names( $csv->getline( $io ) );
-        while ( my $row = $csv->getline_hr($io) ) {
-            if ( $row->{user_id} ne '' && ( $row->{role} eq 'student' || $row->{role} eq 'teacher' ) ) {
-                $sections{ $row->{section_id} }{ $row->{user_id} } = $row;
-            }
-        }
-        for my $s ( keys %sections ) {
-            for my $e ( $self->schema->resultset('Enrollments')->search_rs( { section_id => $s } )->all ) {
-                if ( exists $sections{$s}{$e->user_id} ) {
-                    if ( $e->status ne $sections{$s}{$e->user_id}{status} ) {
-                        push @{ $Return{DIFF} }, $e->to_pruned_hash;
-                        print STDERR "X" if ( $self->debug ); ## DIFF
-                    }
-                }
-                else {
-                    if ( $e->status eq 'active' ) { #ignore deleted status if not in download
-                            push @{ $Return{NotInDownload} }, $e->to_pruned_hash;
-                            print STDERR 'T' if ( $self->debug ); ## NotInDowload
-                    }
-                }
-                delete $sections{$s}{$e->user_id};
-            }
-            for my $e ( keys %{ $sections{$s} } ) {
-                if ( $sections{$s}{$e}{status} eq 'active' ) {
-                    $sections{$s}{$e}{status} = 'deleted';
-                    push @{ $Return{NotInTarp} }, $sections{$s}{$e};
-                    print STDERR 'D'if ( $self->debug ); ## NotInTarp
-                }
-            }
-        }
-        print STDERR "\n" if ( $self->debug );
-    }
-    return \%Return;
-}
-
 sub send_zips {
     my ( $self, $zips, $type ) = @_;
     my @returns;
@@ -145,7 +71,7 @@ sub send_zips {
             while ( $keep_going ) {
                 sleep 5;
                 $response = $self->CanvasCloud->api('sisimports', scheme => $self->config->{CanvasCloud}{scheme})->status( $id );
-                $keep_going = 0 if ( 
+                $keep_going = 0 if (
                                         (!exists $response->{workflow_state})
                                      || ( exists $response->{progress} && $response->{progress} == 100 )
                                      || (  $response->{workflow_state} =~ m/^(imported|failed).*/ )

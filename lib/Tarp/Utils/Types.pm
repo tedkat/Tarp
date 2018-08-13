@@ -33,7 +33,7 @@ declare GroupMembershipStatus,
 
 declare DateStr,
     as Str,
-    where { m/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ/ };
+    where { m/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ*/ };
 
 
 coerce DateStr,
@@ -42,7 +42,7 @@ coerce DateStr,
 
 declare OptionalDateStr,
     as Str,
-    where { $_ eq '' or  m/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ/ };
+    where { $_ eq '' or  m/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ*/ };
 
 coerce OptionalDateStr,
     from Datetime,
