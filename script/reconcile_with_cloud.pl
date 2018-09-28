@@ -17,18 +17,19 @@ use Tarp;
 use Tarp::Export;
 
 ## SCRIPT VARS AND COMMANDLINE OPTIONS
-my ($DATE, $TYPE, $DEBUG, $LIST, $HELP) = ('', '', 0, 0, 0);
+my ($DATE, $TYPE, $DEBUG, $LIST, $HELP, $STUDENT) = ('', '', 0, 0, 0, 0);
 
 GetOptions(
-            'help|?'   => \$HELP,
-            'type|t=s' => \$TYPE,
-            'list|l'   => \$LIST,
-            'debug|d'  => \$DEBUG,
-            'date=s'   => \$DATE,
+            'help|?'    => \$HELP,
+            'type|t=s'  => \$TYPE,
+            'list|l'    => \$LIST,
+            'student|s' => \$STUDENT,
+            'debug|d'   => \$DEBUG,
+            'date=s'    => \$DATE,
           );
 
 if ( $LIST ) {
-  print "types are:\n\t", join("\n\t", qw/enrollments courses sections/), "\n";
+  print "types are:\n\t", join("\n\t", qw/Enrollments Courses Sections/), "\n";
   exit(1);
 }
 if ( $DATE ) {
@@ -175,12 +176,21 @@ sub Enrollments {
     $csv->column_names( $csv->getline( $io ) );
     while ( my $row = $csv->getline_hr($io) ) {
         if ( $row->{user_id} ne '' && ( $row->{role} eq 'student' || $row->{role} eq 'teacher' ) ) {
+            next if ( $STUDENT && $row->{role} eq 'teacher' );  ## Student only flag skip teacher
             $sections{ $row->{section_id} }{ $row->{user_id} } = $row;
         }
     }
 
     for my $s ( keys %sections ) {
-        for my $e ( $tarp->schema->resultset('Enrollments')->search_rs( { section_id => $s } )->all ) {
+        my $enroll_rs;
+        ## Different query based on STUDENT flag
+        if ( $STUDENT ) {
+            $enroll_rs = $tarp->schema->resultset('Enrollments')->search_rs( { c_role => 'student', section_id => $s } );
+        } else {
+            $enroll_rs = $tarp->schema->resultset('Enrollments')->search_rs( { section_id => $s } );
+        }
+        
+        for my $e ( $enroll_rs->all ) {
             if ( exists $sections{$s}{$e->user_id} ) {
                 if ( $e->status ne $sections{$s}{$e->user_id}{status} ) {
                     push @{ $Return{DIFF} }, $e->to_pruned_hash;
@@ -242,6 +252,7 @@ reconsile_with_cloud.pl (@options)
  Options:
   -t --type  "TYPE"           set type to reconcile
   -l --list                   list reconcile types
+  -s --student                only process students
   -d --debug                  set debug
      --date  "2002-01-01"     override today's date with this date
   -? --help                   Display Help
