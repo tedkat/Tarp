@@ -17,13 +17,14 @@ use Tarp;
 use Tarp::Export;
 
 ## SCRIPT VARS AND COMMANDLINE OPTIONS
-my ($DATE, $TYPE, $DEBUG, $LIST, $HELP, $STUDENT) = ('', '', 0, 0, 0, 0);
+my ($DATE, $TYPE, $DEBUG, $LIST, $HELP, $STUDENT, $USER) = ('', '', 0, 0, 0, 0, 0);
 
 GetOptions(
             'help|?'    => \$HELP,
             'type|t=s'  => \$TYPE,
             'list|l'    => \$LIST,
             'student|s' => \$STUDENT,
+            'user|u=s'  => \$USER,
             'debug|d'   => \$DEBUG,
             'date=s'    => \$DATE,
           );
@@ -177,6 +178,7 @@ sub Enrollments {
     while ( my $row = $csv->getline_hr($io) ) {
         if ( $row->{user_id} ne '' && ( $row->{role} eq 'student' || $row->{role} eq 'teacher' ) ) {
             next if ( $STUDENT && $row->{role} eq 'teacher' );  ## Student only flag skip teacher
+            next if ( $USER && $row->{user_id} ne $USER );      ## User only flag
             $sections{ $row->{section_id} }{ $row->{user_id} } = $row;
         }
     }
@@ -186,6 +188,8 @@ sub Enrollments {
         ## Different query based on STUDENT flag
         if ( $STUDENT ) {
             $enroll_rs = $tarp->schema->resultset('Enrollments')->search_rs( { c_role => 'student', section_id => $s } );
+        } elsif ( $USER ) {
+            $enroll_rs = $tarp->schema->resultset('Enrollments')->search_rs( { user_id => $USER, section_id => $s } );
         } else {
             $enroll_rs = $tarp->schema->resultset('Enrollments')->search_rs( { section_id => $s } );
         }
@@ -253,6 +257,7 @@ reconsile_with_cloud.pl (@options)
   -t --type  "TYPE"           set type to reconcile
   -l --list                   list reconcile types
   -s --student                only process students
+  -u --user "[USERID]"        only process user
   -d --debug                  set debug
      --date  "2002-01-01"     override today's date with this date
   -? --help                   Display Help
