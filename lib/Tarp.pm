@@ -19,6 +19,10 @@ has configfile => ( is => 'ro', required => 1 );
 has schema => ( is => 'ro', writer => '_schema' );
 has debug => ( is => 'rw', default => 0 );
 
+has updates => ( is => 'ro', default => 1 );
+has creates => ( is => 'ro', default => 1 );
+has deletes => ( is => 'ro', default => 1 );
+
 #Private
 has config => ( is => 'ro', writer => '_config', init_arg => undef );
 has CanvasCloud => ( is => 'ro', builder => '_CanvasCloud', init_arg => undef, lazy => 1 );
@@ -46,6 +50,7 @@ sub push_changes {
     $export = Tarp::Export->new( debug => $self->debug, schema => $self->schema );
 
     for my $change_type ( qw/updates deletes creates/ ) {
+        next unless $self->$change_type; ## Skip run if object set not too
         $import->$change_type;
         push @returns, $self->send_zips( $export->$change_type, 'push_changes:'.$change_type );
     }
