@@ -98,6 +98,9 @@ sub Courses {
     print STDERR "Courses Term->", $term_map{$tid}{name}, "\n" if ( $DEBUG );
     my $can_report = $tarp->CanvasCloud->api('reports', scheme => $tarp->config->{CanvasCloud}{scheme});
     my $text = $can_report->get( 'sis_export_csv', { 'parameters[enrollment_term_id]' => $term_map{$tid}{id}, 'parameters[courses]' => 1 } );
+
+    return \%Return unless $text;
+
     my $io = IO::String->new($text);
 
     my %courses;
@@ -134,6 +137,9 @@ sub Sections {
     print STDERR "Sections Term->", $term_map{$tid}{name}, "\n" if ( $DEBUG );
     my $can_report = $tarp->CanvasCloud->api('reports', scheme => $tarp->config->{CanvasCloud}{scheme});
     my $text = $can_report->get( 'sis_export_csv', { 'parameters[enrollment_term_id]' => $term_map{$tid}{id}, 'parameters[sections]' => 1 } );
+
+    return \%Return unless $text;
+
     my $io = IO::String->new($text);
 
     my %sections;
@@ -170,6 +176,9 @@ sub Enrollments {
     print STDERR "Enrollments Term->", $term_map{$tid}{name}, "\n" if ( $DEBUG );
     my $can_report = $tarp->CanvasCloud->api('reports', scheme => $tarp->config->{CanvasCloud}{scheme});
     my $text = $can_report->get( 'sis_export_csv', { 'parameters[enrollment_term_id]' => $term_map{$tid}{id}, 'parameters[enrollments]' => 1 } );
+    
+    return \%Return unless $text;
+
     my $io = IO::String->new($text);
 
     my %sections;
