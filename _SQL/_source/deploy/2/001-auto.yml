@@ -1,0 +1,1702 @@
+---
+schema:
+  procedures: {}
+  tables:
+    c_accounts:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - account_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        account_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: account_id
+          order: 1
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 5
+          size:
+            - 0
+        is_dirty:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_dirty
+          order: 6
+          size:
+            - 1
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 3
+          size:
+            - 0
+        parent_account_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: parent_account_id
+          order: 2
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 4
+          size:
+            - 0
+      indices: []
+      name: c_accounts
+      options: []
+      order: 1
+    c_courses:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - course_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        account_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: account_id
+          order: 4
+          size:
+            - 0
+        course_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: course_id
+          order: 1
+          size:
+            - 0
+        end_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: end_date
+          order: 8
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 9
+          size:
+            - 0
+        is_dirty:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_dirty
+          order: 10
+          size:
+            - 1
+        long_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: long_name
+          order: 3
+          size:
+            - 0
+        short_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: short_name
+          order: 2
+          size:
+            - 0
+        start_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: start_date
+          order: 7
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 6
+          size:
+            - 0
+        term_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: term_id
+          order: 5
+          size:
+            - 0
+      indices: []
+      name: c_courses
+      options: []
+      order: 2
+    c_enrollments:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - course_id
+            - user_id
+            - c_role
+            - section_id
+            - associated_user_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        associated_user_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: associated_user_id
+          order: 8
+          size:
+            - 0
+        c_role:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: c_role
+          order: 3
+          size:
+            - 0
+        course_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: course_id
+          order: 1
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 9
+          size:
+            - 0
+        is_dirty:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_dirty
+          order: 10
+          size:
+            - 1
+        role_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: role_id
+          order: 4
+          size:
+            - 0
+        root_account:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: root_account
+          order: 5
+          size:
+            - 0
+        section_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: section_id
+          order: 6
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 7
+          size:
+            - 0
+        user_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: user_id
+          order: 2
+          size:
+            - 0
+      indices: []
+      name: c_enrollments
+      options: []
+      order: 3
+    c_sections:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - section_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        course_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: course_id
+          order: 2
+          size:
+            - 0
+        end_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: end_date
+          order: 6
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 7
+          size:
+            - 0
+        is_dirty:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_dirty
+          order: 8
+          size:
+            - 1
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 3
+          size:
+            - 0
+        section_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: section_id
+          order: 1
+          size:
+            - 0
+        start_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: start_date
+          order: 5
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 4
+          size:
+            - 0
+      indices: []
+      name: c_sections
+      options: []
+      order: 4
+    c_terms:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - term_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        end_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: end_date
+          order: 5
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 6
+          size:
+            - 0
+        is_dirty:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_dirty
+          order: 7
+          size:
+            - 1
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 2
+          size:
+            - 0
+        start_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: start_date
+          order: 4
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 3
+          size:
+            - 0
+        term_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: term_id
+          order: 1
+          size:
+            - 0
+      indices: []
+      name: c_terms
+      options: []
+      order: 5
+    c_users:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        authentication_provider_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: authentication_provider_id
+          order: 4
+          size:
+            - 0
+        email:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: email
+          order: 10
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 12
+          size:
+            - 0
+        first_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: first_name
+          order: 6
+          size:
+            - 0
+        integration_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: integration_id
+          order: 2
+          size:
+            - 0
+        is_dirty:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_dirty
+          order: 13
+          size:
+            - 1
+        last_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: last_name
+          order: 7
+          size:
+            - 0
+        login_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: login_id
+          order: 3
+          size:
+            - 0
+        password:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: password
+          order: 5
+          size:
+            - 0
+        short_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: short_name
+          order: 9
+          size:
+            - 0
+        sortable_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: sortable_name
+          order: 8
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 11
+          size:
+            - 0
+        user_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: user_id
+          order: 1
+          size:
+            - 0
+      indices: []
+      name: c_users
+      options: []
+      order: 6
+    c_xlists:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - xlist_course_id
+            - section_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 4
+          size:
+            - 0
+        is_dirty:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_dirty
+          order: 5
+          size:
+            - 1
+        section_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: section_id
+          order: 2
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 3
+          size:
+            - 0
+        xlist_course_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: xlist_course_id
+          order: 1
+          size:
+            - 0
+      indices: []
+      name: c_xlists
+      options: []
+      order: 7
+    s_queue:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - queue_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        creation_ts:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: creation_ts
+          order: 9
+          size:
+            - 0
+        json_data:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: json_data
+          order: 4
+          size:
+            - 0
+        queue_id:
+          data_type: bigint
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: queue_id
+          order: 1
+          size:
+            - 0
+        queue_meta:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: queue_meta
+          order: 6
+          size:
+            - 0
+        run_end:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: run_end
+          order: 8
+          size:
+            - 0
+        run_start:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: run_start
+          order: 7
+          size:
+            - 0
+        status:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 3
+          size:
+            - 1
+        submitted_ts:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: submitted_ts
+          order: 10
+          size:
+            - 0
+        username:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: username
+          order: 2
+          size:
+            - 0
+        zip_file:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: zip_file
+          order: 5
+          size:
+            - 0
+      indices: []
+      name: s_queue
+      options: []
+      order: 8
+    t_history_log:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - histlog_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        creation_ts:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: creation_ts
+          order: 5
+          size:
+            - 0
+        domainspace:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: domainspace
+          order: 2
+          size:
+            - 0
+        histlog_id:
+          data_type: bigint
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: histlog_id
+          order: 1
+          size:
+            - 0
+        jsondata:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: jsondata
+          order: 4
+          size:
+            - 0
+        nametag:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: nametag
+          order: 3
+          size:
+            - 0
+      indices: []
+      name: t_history_log
+      options: []
+      order: 9
+    t_studentscores:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - score_type
+            - student_sis_id
+            - section_sis_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        current_score:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: current_score
+          order: 4
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 6
+          size:
+            - 0
+        is_dirty:
+          data_type: char
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_dirty
+          order: 7
+          size:
+            - 1
+        point_possible:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: point_possible
+          order: 5
+          size:
+            - 0
+        score_type:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: score_type
+          order: 1
+          size:
+            - 0
+        section_sis_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: section_sis_id
+          order: 3
+          size:
+            - 0
+        student_sis_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: student_sis_id
+          order: 2
+          size:
+            - 0
+      indices: []
+      name: t_studentscores
+      options: []
+      order: 10
+    tmp_accounts:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - account_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        account_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: account_id
+          order: 1
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 5
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 3
+          size:
+            - 0
+        parent_account_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: parent_account_id
+          order: 2
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 4
+          size:
+            - 0
+      indices: []
+      name: tmp_accounts
+      options: []
+      order: 11
+    tmp_courses:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - course_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        account_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: account_id
+          order: 4
+          size:
+            - 0
+        course_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: course_id
+          order: 1
+          size:
+            - 0
+        end_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: end_date
+          order: 8
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 9
+          size:
+            - 0
+        long_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: long_name
+          order: 3
+          size:
+            - 0
+        short_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: short_name
+          order: 2
+          size:
+            - 0
+        start_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: start_date
+          order: 7
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 6
+          size:
+            - 0
+        term_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: term_id
+          order: 5
+          size:
+            - 0
+      indices: []
+      name: tmp_courses
+      options: []
+      order: 12
+    tmp_enrollments:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - course_id
+            - user_id
+            - c_role
+            - section_id
+            - associated_user_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        associated_user_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: associated_user_id
+          order: 8
+          size:
+            - 0
+        c_role:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: c_role
+          order: 3
+          size:
+            - 0
+        course_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: course_id
+          order: 1
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 9
+          size:
+            - 0
+        role_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: role_id
+          order: 4
+          size:
+            - 0
+        root_account:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: root_account
+          order: 5
+          size:
+            - 0
+        section_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: section_id
+          order: 6
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 7
+          size:
+            - 0
+        user_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: user_id
+          order: 2
+          size:
+            - 0
+      indices: []
+      name: tmp_enrollments
+      options: []
+      order: 13
+    tmp_sections:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - section_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        course_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: course_id
+          order: 2
+          size:
+            - 0
+        end_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: end_date
+          order: 6
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 7
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 3
+          size:
+            - 0
+        section_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: section_id
+          order: 1
+          size:
+            - 0
+        start_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: start_date
+          order: 5
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 4
+          size:
+            - 0
+      indices: []
+      name: tmp_sections
+      options: []
+      order: 14
+    tmp_terms:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - term_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        end_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: end_date
+          order: 5
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 6
+          size:
+            - 0
+        name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 2
+          size:
+            - 0
+        start_date:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: start_date
+          order: 4
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 3
+          size:
+            - 0
+        term_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: term_id
+          order: 1
+          size:
+            - 0
+      indices: []
+      name: tmp_terms
+      options: []
+      order: 15
+    tmp_users:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        authentication_provider_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: authentication_provider_id
+          order: 4
+          size:
+            - 0
+        email:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: email
+          order: 10
+          size:
+            - 0
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 12
+          size:
+            - 0
+        first_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: first_name
+          order: 6
+          size:
+            - 0
+        integration_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: integration_id
+          order: 3
+          size:
+            - 0
+        last_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: last_name
+          order: 7
+          size:
+            - 0
+        login_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: login_id
+          order: 2
+          size:
+            - 0
+        password:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: password
+          order: 5
+          size:
+            - 0
+        short_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: short_name
+          order: 9
+          size:
+            - 0
+        sortable_name:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: sortable_name
+          order: 8
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 11
+          size:
+            - 0
+        user_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: user_id
+          order: 1
+          size:
+            - 0
+      indices: []
+      name: tmp_users
+      options: []
+      order: 16
+    tmp_xlists:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - xlist_course_id
+            - section_id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        extra:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: extra
+          order: 4
+          size:
+            - 0
+        section_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: section_id
+          order: 2
+          size:
+            - 0
+        status:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: status
+          order: 3
+          size:
+            - 0
+        xlist_course_id:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: xlist_course_id
+          order: 1
+          size:
+            - 0
+      indices: []
+      name: tmp_xlists
+      options: []
+      order: 17
+  triggers: {}
+  views: {}
+translator:
+  add_drop_table: 0
+  filename: ~
+  no_comments: 0
+  parser_args:
+    sources:
+      - Accounts
+      - Courses
+      - Enrollments
+      - HistoryLog
+      - SYSQueue
+      - Scores
+      - Sections
+      - Terms
+      - Users
+      - Xlists
+      - tmpAccounts
+      - tmpCourses
+      - tmpEnrollments
+      - tmpSections
+      - tmpTerms
+      - tmpUsers
+      - tmpXlists
+  parser_type: SQL::Translator::Parser::DBIx::Class
+  producer_args: {}
+  producer_type: SQL::Translator::Producer::YAML
+  show_warnings: 0
+  trace: 0
+  version: 0.11024
