@@ -16,6 +16,7 @@ __PACKAGE__->table('tmp_users');
 __PACKAGE__->add_columns(
                           user_id                    => { data_type => 'text', is_nullable => 0            },
                           login_id                   => { data_type => 'text', is_nullable => 0            },
+                          integration_id             => { data_type => 'text', is_nullable => 1            },
                           authentication_provider_id => { data_type => 'text', is_nullable => 0            },
                           password                   => { data_type => 'text', is_nullable => 0            },
                           first_name                 => { data_type => 'text', is_nullable => 0            },

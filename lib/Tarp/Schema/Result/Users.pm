@@ -15,6 +15,7 @@ __PACKAGE__->table('c_users');
 
 __PACKAGE__->add_columns(
                           user_id                    => { data_type => 'text', is_nullable => 0            },
+                          integration_id             => { data_type => 'text', is_nullable => 1            },
                           login_id                   => { data_type => 'text', is_nullable => 0            },
                           authentication_provider_id => { data_type => 'text', is_nullable => 0            },
                           password                   => { data_type => 'text', is_nullable => 0            },

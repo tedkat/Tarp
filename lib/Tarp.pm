@@ -64,6 +64,21 @@ sub push_all {
     return $self->send_zips( $export->all, 'push_all' );
 }
 
+sub save_all {
+    my ($self) = @_;
+    my $save_dir = path("/tmp");
+    print STDERR __PACKAGE__, "->save_all\n" if ( $self->debug );
+    my $export = Tarp::Export->new( schema => $self->schema );
+    my $zips = $export->all;
+    if ( ref($zips) eq 'ARRAY' && $zips->@* ) {
+        for my $zip ( $zips->@* ) {
+            my $this_file = $save_dir->child("TarpExport.$zip->{string}.$$.zip");
+            $zip->{zip}->writeToFileNamed($this_file->stringify);
+            print STDERR __PACKAGE__, "\tWrote Zip File $this_file\n";
+        }
+    }
+}
+
 sub send_zips {
     my ( $self, $zips, $type ) = @_;
     my @returns;
